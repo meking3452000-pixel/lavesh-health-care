@@ -1,0 +1,4 @@
+backend/node_modules/
+backend/database/data/
+backend/public/uploads/
+.env

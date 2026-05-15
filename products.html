@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Full Catalog — Lavesh Health Care</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #060d1a; color: #e2e8f0; margin: 0; }
+    .font-serif { font-family: 'Playfair Display', serif; }
+
+    /* ── Search ── */
+    .search-wrap { position: relative; width: 100%; max-width: 460px; }
+    .search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #64748b; pointer-events: none; }
+    #searchInput {
+      width: 100%; background: #0d1829; border: 1px solid #1e3a5f;
+      border-radius: 999px; padding: 12px 20px 12px 46px;
+      color: #e2e8f0; font-size: 14px; outline: none; font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    #searchInput:focus { border-color: #00B4D8; }
+
+    /* ── Category pills ── */
+    .cat-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 999px; font-size: 13px; font-weight: 500;
+      cursor: pointer; border: 1px solid #1e3a5f; background: #0d1829;
+      color: #94a3b8; transition: all 0.18s; white-space: nowrap; user-select: none;
+    }
+    .pill:hover { border-color: #00B4D8; color: #e2e8f0; }
+    .pill.active { background: #00B4D8; border-color: #00B4D8; color: #020617; font-weight: 700; }
+    .pill-count { opacity: 0.8; font-size: 12px; }
+
+    /* ── Product card ── */
+    .product-card {
+      background: #0d1829;
+      border: 1px solid #1a2d4a;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .product-card:hover { border-color: #00B4D8; transform: translateY(-3px); }
+    .card-img {
+      background: #fff;
+      aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; position: relative;
+    }
+    .card-img img { height: 140px; width: auto; object-fit: contain; }
+    .card-badge {
+      position: absolute; top: 10px; right: 10px;
+      background: #00B4D8; color: #020617;
+      font-size: 9px; font-weight: 800; padding: 3px 9px;
+      border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .card-body { padding: 16px 16px 18px; display: flex; flex-direction: column; flex: 1; }
+    .card-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; color: #fff; margin-bottom: 4px; }
+    .card-tag  { font-size: 12px; color: #64748b; margin-bottom: 14px; flex: 1; }
+    .card-pill {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #002a0d; color: #6ee7b7;
+      border-radius: 999px; font-size: 10px; font-weight: 700; font-family: 'Courier New', monospace;
+      padding: 5px 14px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px;
+      width: fit-content;
+    }
+    .card-btn {
+      width: 100%; padding: 11px;
+      background: #0a2035; border: 1px solid #1e3a5f;
+      border-radius: 10px; color: #00B4D8;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: inherit; transition: background 0.18s, border-color 0.18s;
+      letter-spacing: 0.04em;
+    }
+    .card-btn:hover { background: #0f2e4a; border-color: #00B4D8; }
+
+    /* ── Grid ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 1200px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px)  { .product-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px)  { .product-grid { grid-template-columns: 1fr; } }
+
+    /* ── Inquiry Modal ── */
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(2,6,23,0.85); backdrop-filter: blur(6px); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
+    .modal-box { background: #0f172a; border: 1px solid #1e3a5f; border-radius: 20px; width: 100%; max-width: 500px; overflow: hidden; box-shadow: 0 0 60px rgba(0,180,216,0.1); }
+    .modal-hdr { background: linear-gradient(135deg,#003345,#001a2e); padding: 20px 24px; border-bottom: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; }
+    .modal-body { padding: 22px; display: flex; flex-direction: column; gap: 13px; }
+    .modal-ftr { padding: 14px 22px; border-top: 1px solid #1e293b; display: flex; justify-content: flex-end; gap: 10px; }
+    .inp { width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 9px 12px; color: #fff; font-size: 14px; outline: none; font-family: inherit; }
+    .inp:focus { border-color: #00B4D8; }
+    .lbl { display: block; color: #94a3b8; font-size: 11px; font-weight: 600; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .btn-cancel { background: transparent; border: 1px solid #334155; color: #94a3b8; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; }
+    .btn-submit { background: #00B4D8; border: none; color: #020617; padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .success-box { display: none; padding: 32px 24px; text-align: center; }
+
+    /* ── Misc ── */
+    .divider { border: none; border-top: 1px solid #1a2d4a; }
+    .skeleton { background: linear-gradient(90deg,#0d1829 25%,#162038 50%,#0d1829 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 16px; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════════════════ -->
+<header style="background:#060d1a;border-bottom:1px solid #1a2d4a;position:sticky;top:0;z-index:50">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between">
+    <a href="/" style="display:flex;align-items:center;gap:12px;text-decoration:none">
+      <div style="background:#fff;padding:6px;border-radius:10px">
+        <img src="https://lh3.googleusercontent.com/aida/ADBb0uiH-JnEm1DUhFHKeMaVzWd2fpBOjt2Y0wASNfmK0CPub2o-R08pQl95dBUeF7vxnMhSs6v70RqcfC-CA3l9K9vtdqfdCTsrVTPsavBUANMVt5X4ObR5zjoQlH1XrXj8OoTNnz1bv7J2Vumk0fNF690L9WVTCCVfFdGv6WtG2Hl02uaV0HdVlVkDCAr6C-9jKBTxf04Mvn_44mNi7rtoRAZUpz0i5YPUoPS2Enf0G-trC3-d7RXgH2bpy-s" alt="Logo" style="height:32px;width:auto"/>
+      </div>
+      <span style="color:#fff;font-size:15px;font-weight:600;font-family:'Playfair Display',serif">Lavesh <em>Health Care</em></span>
+    </a>
+    <nav style="display:flex;align-items:center;gap:24px">
+      <a href="/" style="color:#94a3b8;text-decoration:none;font-size:13px;font-weight:500" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">Home</a>
+      <a href="products.html" style="color:#00B4D8;text-decoration:none;font-size:13px;font-weight:600">Catalog</a>
+      <a href="about.html" style="color:#94a3b8;text-decoration:none;font-size:13px;font-weight:500" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">About Us</a>
+      <a href="https://wa.me/917022118290" target="_blank"
+         style="background:#00B4D8;color:#020617;text-decoration:none;padding:8px 18px;border-radius:999px;font-size:13px;font-weight:700">
+        WhatsApp Us
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- Quick bar -->
+<div style="background:#060d1a;border-bottom:1px solid #1a2d4a;padding:8px 0">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:flex;flex-wrap:wrap;gap:20px;justify-content:center">
+    <a href="tel:+917022118290" style="color:#64748b;text-decoration:none;font-size:12px;display:flex;align-items:center;gap:6px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00B4D8" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498A1 1 0 0121 19v1a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      +91-7022118290
+    </a>
+    <a href="mailto:laveshealthcare@gmail.com" style="color:#64748b;text-decoration:none;font-size:12px;display:flex;align-items:center;gap:6px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00B4D8" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      laveshealthcare@gmail.com
+    </a>
+    <span style="color:#64748b;font-size:12px;display:flex;align-items:center;gap:6px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00B4D8" stroke-width="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Bommanahalli, Bangalore
+    </span>
+  </div>
+</div>
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════ -->
+<section style="padding:64px 24px 48px;text-align:center;background:radial-gradient(ellipse at center top,rgba(0,100,120,0.1) 0%,transparent 60%)">
+  <p style="font-size:11px;letter-spacing:0.3em;color:#00B4D8;text-transform:uppercase;margin-bottom:16px">Full Catalog</p>
+  <h1 style="font-family:'Playfair Display',serif;font-size:clamp(40px,6vw,72px);color:#fff;margin-bottom:14px;line-height:1.1">
+    Our <em style="color:#00B4D8">Products</em>
+  </h1>
+  <p id="heroSubtitle" style="color:#64748b;font-size:15px">Loading products…</p>
+</section>
+
+<!-- ══ FILTERS ════════════════════════════════════════════════════════ -->
+<div style="max-width:1280px;margin:0 auto;padding:0 24px 32px">
+  <!-- Search -->
+  <div class="search-wrap" style="margin-bottom:20px">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input id="searchInput" type="text" placeholder="Search products…" oninput="applyFilters()" />
+  </div>
+  <!-- Category pills -->
+  <div class="cat-pills" id="catPills">
+    <div class="pill active" data-cat="all" onclick="selectCat(this)">All <span class="pill-count" id="countAll"></span></div>
+  </div>
+  <hr class="divider" style="margin:24px 0"/>
+  <!-- Result count -->
+  <p id="resultCount" style="font-size:13px;color:#64748b;margin-bottom:20px"></p>
+  <!-- Grid -->
+  <div class="product-grid" id="productGrid">
+    <!-- skeleton placeholders -->
+    <div class="skeleton" style="height:340px"></div>
+    <div class="skeleton" style="height:340px"></div>
+    <div class="skeleton" style="height:340px"></div>
+    <div class="skeleton" style="height:340px"></div>
+  </div>
+  <!-- Empty state -->
+  <div id="emptyState" style="display:none;text-align:center;padding:60px 0;color:#64748b">
+    <div style="font-size:40px;margin-bottom:12px">🔍</div>
+    <p style="font-size:16px;font-weight:500;color:#94a3b8;margin-bottom:6px">No products found</p>
+    <p style="font-size:13px">Try a different search or category</p>
+  </div>
+</div>
+
+<!-- ══ ENQUIRY MODAL ═══════════════════════════════════════════════════ -->
+<div class="modal-bg" id="inqModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div>
+        <div style="color:#fff;font-size:17px;font-weight:700">Enquire Now</div>
+        <div id="modalProduct" style="color:#00B4D8;font-size:12px;margin-top:2px;display:none"></div>
+      </div>
+      <button onclick="closeModal()" style="background:rgba(255,255,255,0.06);border:1px solid #1e293b;color:#94a3b8;width:32px;height:32px;border-radius:8px;font-size:15px;cursor:pointer">✕</button>
+    </div>
+    <!-- Form -->
+    <div class="modal-body" id="modalForm">
+      <input type="hidden" id="mProductId"/>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+        <div><label class="lbl">Full Name *</label><input class="inp" id="mName" placeholder="Your name"/></div>
+        <div><label class="lbl">Business Name *</label><input class="inp" id="mBusiness" placeholder="Company / brand"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+        <div><label class="lbl">Mobile Number *</label><input class="inp" id="mPhone" type="tel" placeholder="+91 98765 43210"/></div>
+        <div><label class="lbl">City / Location *</label><input class="inp" id="mCity" placeholder="e.g. Mumbai"/></div>
+      </div>
+      <div>
+        <label class="lbl">Message <span style="color:#475569;font-weight:400;text-transform:none">(optional)</span></label>
+        <textarea class="inp" id="mMessage" rows="2" placeholder="Tell us your requirements, quantity needed, etc." style="resize:none"></textarea>
+      </div>
+      <p id="mError" style="color:#ef4444;font-size:12px;display:none;margin:0">Please fill in all required fields.</p>
+    </div>
+    <!-- Success -->
+    <div class="success-box" id="modalSuccess">
+      <div style="width:56px;height:56px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div style="color:#fff;font-size:18px;font-weight:700;margin-bottom:8px">Thank you!</div>
+      <p style="color:#64748b;font-size:13px;line-height:1.6;margin-bottom:20px">Continue to WhatsApp to connect with our team directly.</p>
+      <a id="waBtn" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:9px;background:#25D366;color:#fff;text-decoration:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Open WhatsApp
+      </a>
+    </div>
+    <div class="modal-ftr" id="modalFtr">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" onclick="submitEnquiry()">Send Enquiry →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════════════ -->
+<footer style="background:#040b16;border-top:1px solid #1a2d4a;padding:40px 24px 20px;margin-top:60px">
+  <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;font-size:13px;color:#64748b;margin-bottom:32px">
+    <div>
+      <div style="color:#fff;font-weight:700;font-size:15px;margin-bottom:12px">LAVESH HEALTH CARE</div>
+      <p style="line-height:1.7">Premium vegan capsule supplements. GMP certified, scientifically formulated.</p>
+    </div>
+    <div>
+      <div style="color:#94a3b8;font-weight:600;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px">Contact</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <a href="tel:+917022118290" style="color:#64748b;text-decoration:none">+91-7022118290</a>
+        <a href="tel:+919187140350" style="color:#64748b;text-decoration:none">+91-9187140350</a>
+        <a href="mailto:laveshealthcare@gmail.com" style="color:#64748b;text-decoration:none">laveshealthcare@gmail.com</a>
+      </div>
+    </div>
+    <div>
+      <div style="color:#94a3b8;font-weight:600;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px">Address</div>
+      <address style="font-style:normal;line-height:1.7">
+        S.S Suma Katha No 950/42/39,<br/>
+        No 39, 2nd Floor, Garvebhavi palya,<br/>
+        Bommanahalli, Bangalore,<br/>
+        Karnataka - 560068, INDIA.
+      </address>
+    </div>
+  </div>
+  <div style="max-width:1280px;margin:0 auto;padding-top:20px;border-top:1px solid #1a2d4a;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#334155;flex-wrap:wrap;gap:8px">
+    <span>© 2025 Lavesh Health Care. All rights reserved.</span>
+    <div style="display:flex;gap:20px">
+      <a href="/" style="color:#334155;text-decoration:none">Home</a>
+      <a href="about.html" style="color:#334155;text-decoration:none">About</a>
+      <a href="https://wa.me/917022118290" target="_blank" style="color:#334155;text-decoration:none">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const API  = '/api';
+const WA   = '917022118290';
+
+// ── Category emojis ────────────────────────────────────────────────
+const CAT_EMOJI = {
+  vitamins:          '💊',
+  minerals:          '💪',
+  herbal:            '🌿',
+  'amino-acids':     '🧬',
+  'weight-management':'⚖️',
+  'gut-health':      '🦠',
+  women:             '👩',
+  effervescent:      '💧',
+  specialty:         '🔬',
+};
+
+let allProducts  = [];
+let allCategories = [];
+let activeCat    = 'all';
+let searchTerm   = '';
+
+// ── Boot ───────────────────────────────────────────────────────────
+async function boot() {
+  try {
+    [allProducts, allCategories] = await Promise.all([
+      fetch(`${API}/products`).then(r => r.json()),
+      fetch(`${API}/categories`).then(r => r.json()),
+    ]);
+    buildPills();
+    applyFilters();
+    document.getElementById('heroSubtitle').textContent =
+      `${allProducts.length} premium vegan supplements across ${allCategories.length} categories`;
+  } catch {
+    document.getElementById('productGrid').innerHTML =
+      '<p style="color:#ef4444;grid-column:1/-1;text-align:center">Failed to load products. Make sure the server is running on port 3001.</p>';
+  }
+}
+
+// ── Pills ──────────────────────────────────────────────────────────
+function buildPills() {
+  const wrap = document.getElementById('catPills');
+  document.getElementById('countAll').textContent = `(${allProducts.length})`;
+  allCategories.forEach(cat => {
+    const count = allProducts.filter(p => p.categoryId === cat.id).length;
+    if (!count) return;
+    const em = CAT_EMOJI[cat.slug] || '💊';
+    const shortName = cat.name.replace(' Capsules','').replace(' Extract','');
+    const pill = document.createElement('div');
+    pill.className = 'pill';
+    pill.dataset.cat = cat.id;
+    pill.onclick = () => selectCat(pill);
+    pill.innerHTML = `${em} ${shortName} <span class="pill-count">(${count})</span>`;
+    wrap.appendChild(pill);
+  });
+}
+
+function selectCat(el) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  activeCat = el.dataset.cat;
+  applyFilters();
+}
+
+// ── Filter + render ────────────────────────────────────────────────
+function applyFilters() {
+  searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+  let filtered = allProducts;
+  if (activeCat !== 'all') filtered = filtered.filter(p => p.categoryId === Number(activeCat));
+  if (searchTerm) filtered = filtered.filter(p =>
+    p.name.toLowerCase().includes(searchTerm) ||
+    (p.tagline || '').toLowerCase().includes(searchTerm)
+  );
+  renderGrid(filtered);
+  const rc = document.getElementById('resultCount');
+  rc.innerHTML = `Showing <span style="color:#00B4D8;font-weight:700">${filtered.length}</span> of ${allProducts.length} products`;
+}
+
+function renderGrid(products) {
+  const grid  = document.getElementById('productGrid');
+  const empty = document.getElementById('emptyState');
+  if (!products.length) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.innerHTML = products.map(p => {
+    const badge = p.badge ? `<div class="card-badge">${p.badge}</div>` : '';
+    const img   = p.image || `https://placehold.co/200x200/f0f4f8/64748b?text=${encodeURIComponent(p.name)}`;
+    const name  = p.name.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    const tag   = (p.tagline||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    return `
+      <div class="product-card">
+        <div class="card-img">
+          ${badge}
+          <img src="${img}" alt="${name}" loading="lazy"
+               onerror="this.src='https://placehold.co/200x200/f0f4f8/64748b?text=${encodeURIComponent(p.name)}'"/>
+        </div>
+        <div class="card-body">
+          <div class="card-name">${name}</div>
+          <div class="card-tag">${tag}</div>
+          <div class="card-pill">${p.capsuleCount || 60} Vegan Capsules</div>
+          <button class="card-btn" onclick="openModal(${p.id},'${name.replace(/'/g,"\\'")}')">Enquire Now</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Modal ──────────────────────────────────────────────────────────
+function openModal(productId, productName) {
+  document.getElementById('mProductId').value  = productId || '';
+  const lbl = document.getElementById('modalProduct');
+  lbl.textContent = '📦 ' + productName; lbl.style.display = 'block';
+  ['mName','mBusiness','mPhone','mCity','mMessage'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('mError').style.display     = 'none';
+  document.getElementById('modalForm').style.display   = 'flex';
+  document.getElementById('modalFtr').style.display    = 'flex';
+  document.getElementById('modalSuccess').style.display = 'none';
+  document.getElementById('inqModal').style.display    = 'flex';
+}
+function closeModal() {
+  document.getElementById('inqModal').style.display = 'none';
+}
+async function submitEnquiry() {
+  const name     = document.getElementById('mName').value.trim();
+  const business = document.getElementById('mBusiness').value.trim();
+  const phone    = document.getElementById('mPhone').value.trim();
+  const city     = document.getElementById('mCity').value.trim();
+  const message  = document.getElementById('mMessage').value.trim();
+  const pId      = document.getElementById('mProductId').value;
+  const pName    = document.getElementById('modalProduct').textContent.replace('📦 ','');
+  const err      = document.getElementById('mError');
+  err.style.display = 'none';
+  if (!name || !business || !phone || !city) { err.style.display = 'block'; return; }
+
+  try {
+    await fetch(`${API}/inquiries`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, businessName: business, phone, city, message,
+        productId: pId || null, productName: pName || '', source: 'catalog' }),
+    });
+  } catch {}
+
+  const waMsg = encodeURIComponent(
+    `Hello, my name is ${name} from ${business} (${city}). I would like to enquire about ${pName || 'your capsule products'}. ${message}`
+  );
+  document.getElementById('waBtn').href = `https://wa.me/${WA}?text=${waMsg}`;
+  document.getElementById('modalForm').style.display    = 'none';
+  document.getElementById('modalFtr').style.display     = 'none';
+  document.getElementById('modalSuccess').style.display = 'block';
+  setTimeout(() => window.open(`https://wa.me/${WA}?text=${waMsg}`, '_blank'), 700);
+}
+
+boot();
+</script>
+</body>
+</html>

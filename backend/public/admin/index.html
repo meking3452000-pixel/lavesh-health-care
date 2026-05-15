@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Lavesh Health Care</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a1628; --surface: #111c30; --surface2: #162038; --border: #1e2e48;
+      --accent: #00B4D8; --accent2: #006e0d; --red: #ef4444; --yellow: #f59e0b;
+      --text: #e2e8f0; --muted: #64748b; --white: #fff;
+      --radius: 10px; --font: 'Inter', sans-serif;
+    }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; display: flex; }
+
+    /* Sidebar */
+    .sidebar { width: 240px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 10; }
+    .sidebar-logo { padding: 24px 20px; border-bottom: 1px solid var(--border); }
+    .sidebar-logo h2 { color: var(--accent); font-size: 15px; font-weight: 700; }
+    .sidebar-logo p { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 14px; font-weight: 500; transition: all 0.15s; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: var(--surface2); color: var(--accent); }
+    .nav-item .material-symbols-outlined { font-size: 20px; }
+    .nav-badge { margin-left: auto; background: var(--accent); color: var(--bg); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 10px; display: none; }
+
+    /* Main */
+    .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+    .topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .topbar h1 { font-size: 18px; font-weight: 600; }
+    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; }
+    .btn-primary { background: var(--accent); color: var(--bg); }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-danger { background: var(--red); color: var(--white); }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    .content { padding: 28px; flex: 1; }
+
+    /* Cards */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+    .stat-card .label { color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat-card .value { font-size: 32px; font-weight: 700; margin-top: 6px; }
+    .stat-card .icon { font-size: 32px; color: var(--accent); margin-bottom: 8px; }
+
+    /* Table */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-header h3 { font-size: 15px; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: var(--surface2); padding: 10px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    td { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .badge-new { background: rgba(0,180,216,0.15); color: var(--accent); }
+    .badge-inprogress { background: rgba(245,158,11,0.15); color: var(--yellow); }
+    .badge-resolved { background: rgba(0,110,13,0.15); color: #22c55e; }
+    .badge-stock { background: rgba(0,110,13,0.15); color: #22c55e; }
+    .badge-nostock { background: rgba(239,68,68,0.15); color: var(--red); }
+
+    /* Search */
+    .search-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .search-bar input { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; color: var(--text); font-size: 14px; width: 300px; outline: none; }
+    .search-bar input:focus { border-color: var(--accent); }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; width: 560px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-header h3 { font-size: 16px; font-weight: 600; }
+    .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 20px; }
+    .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: 500; color: var(--muted); }
+    .form-group input, .form-group textarea, .form-group select {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+      padding: 9px 12px; color: var(--text); font-size: 14px; outline: none; font-family: var(--font);
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    /* Login */
+    .login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 200; }
+    .login-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 380px; }
+    .login-box h1 { font-size: 22px; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+    .login-box p { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .login-box .form-group { margin-bottom: 16px; }
+    .login-box .btn { width: 100%; justify-content: center; margin-top: 8px; }
+    .error-msg { color: var(--red); font-size: 13px; text-align: center; margin-top: 8px; display: none; }
+
+    /* Sections */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Pagination */
+    .pagination { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); justify-content: flex-end; font-size: 13px; color: var(--muted); }
+    .pagination button { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+    .pagination button:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; font-size: 14px; display: flex; align-items: center; gap: 10px; transform: translateY(80px); opacity: 0; transition: all 0.3s; z-index: 500; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: #22c55e; }
+    .toast.error { border-color: var(--red); }
+  </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>Lavesh Health Care</h1>
+    <p>Admin Panel — Sign in to continue</p>
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="admin" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" />
+    </div>
+    <p class="error-msg" id="loginError">Invalid credentials</p>
+    <button class="btn btn-primary" onclick="login()">Sign In</button>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>Lavesh Health Care</h2>
+    <p>Admin Panel</p>
+  </div>
+  <nav class="nav">
+    <a class="nav-item active" onclick="showSection('dashboard')" href="#">
+      <span class="material-symbols-outlined">dashboard</span> Dashboard
+    </a>
+    <a class="nav-item" onclick="showSection('products')" href="#">
+      <span class="material-symbols-outlined">inventory_2</span> Products
+    </a>
+    <a class="nav-item" onclick="showSection('categories')" href="#">
+      <span class="material-symbols-outlined">category</span> Categories
+    </a>
+    <a class="nav-item" onclick="showSection('inquiries')" href="#">
+      <span class="material-symbols-outlined">mail</span> Inquiries
+      <span class="nav-badge" id="inqBadge">0</span>
+    </a>
+    <a class="nav-item" onclick="window.open('/', '_blank')" href="#">
+      <span class="material-symbols-outlined">open_in_new</span> View Site
+    </a>
+    <a class="nav-item" onclick="logout()" href="#" style="margin-top:auto">
+      <span class="material-symbols-outlined">logout</span> Logout
+    </a>
+  </nav>
+</aside>
+
+<!-- Main Content -->
+<div class="main">
+  <div class="topbar">
+    <h1 id="pageTitle">Dashboard</h1>
+    <div class="topbar-actions">
+      <span id="adminName" style="font-size:14px;color:var(--muted)"></span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Dashboard -->
+    <div class="section active" id="sec-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="material-symbols-outlined icon">inventory_2</div>
+          <div class="label">Total Products</div>
+          <div class="value" id="statProducts">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="material-symbols-outlined icon">category</div>
+          <div class="label">Categories</div>
+          <div class="value" id="statCategories">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="material-symbols-outlined icon">mail</div>
+          <div class="label">Total Inquiries</div>
+          <div class="value" id="statInquiries">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="material-symbols-outlined icon">fiber_new</div>
+          <div class="label">New Inquiries</div>
+          <div class="value" id="statNew">—</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Recent Inquiries</h3></div>
+        <table>
+          <thead><tr><th>Name</th><th>Phone</th><th>Product</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="dashInqTable"><tr><td colspan="5" style="color:var(--muted);text-align:center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="section" id="sec-products">
+      <div class="search-bar">
+        <input type="text" id="productSearch" placeholder="Search products..." oninput="filterProducts()" />
+        <button class="btn btn-primary" onclick="openProductModal()">
+          <span class="material-symbols-outlined">add</span> Add Product
+        </button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Name</th><th>Category</th><th>Capsules</th><th>Stock</th><th>Badge</th><th>Actions</th></tr></thead>
+          <tbody id="productsTable"><tr><td colspan="6" style="color:var(--muted);text-align:center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="section" id="sec-categories">
+      <div class="search-bar">
+        <button class="btn btn-primary" onclick="openCatModal()" style="margin-left:auto">
+          <span class="material-symbols-outlined">add</span> Add Category
+        </button>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Name</th><th>Slug</th><th>Products</th><th>Actions</th></tr></thead>
+          <tbody id="categoriesTable"><tr><td colspan="4" style="color:var(--muted);text-align:center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Inquiries -->
+    <div class="section" id="sec-inquiries">
+      <div class="search-bar">
+        <input type="text" id="inqSearch" placeholder="Search by name, business, phone, city…" oninput="loadInquiries()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--text);font-size:14px;width:280px;outline:none" />
+        <select id="inqFilter" onchange="loadInquiries()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;outline:none">
+          <option value="">All Statuses</option>
+          <option value="new">New</option>
+          <option value="in-progress">In Progress</option>
+          <option value="resolved">Resolved</option>
+        </select>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr><th>Name</th><th>Business</th><th>Phone</th><th>City</th><th>Message</th><th>Source</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="inquiriesTable"><tr><td colspan="9" style="color:var(--muted);text-align:center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="productModalTitle">Add Product</h3>
+      <button class="modal-close" onclick="closeModal('productModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editProductId" />
+      <div class="form-row">
+        <div class="form-group"><label>Product Name *</label><input id="pName" placeholder="Vitamin C 1000mg" /></div>
+        <div class="form-group"><label>Slug *</label><input id="pSlug" placeholder="vitamin-c-1000mg" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Category *</label>
+          <select id="pCategory"><option value="">Select category</option></select>
+        </div>
+        <div class="form-group"><label>Badge</label><input id="pBadge" placeholder="Best Seller / New" /></div>
+      </div>
+      <div class="form-group"><label>Tagline</label><input id="pTagline" placeholder="Immune Support & Antioxidant" /></div>
+      <div class="form-group"><label>Description</label><textarea id="pDescription" rows="3"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Capsule Count</label><input id="pCapsules" type="number" placeholder="60" /></div>
+        <div class="form-group"><label>Form</label><input id="pForm" placeholder="Vegan Capsule" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Grade</label><input id="pGrade" placeholder="Pharma Grade" /></div>
+        <div class="form-group"><label>Origin</label><input id="pOrigin" placeholder="India" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Shelf Life</label><input id="pShelfLife" placeholder="24 months" /></div>
+        <div class="form-group"><label>Storage</label><input id="pStorage" placeholder="Cool & dry place" /></div>
+      </div>
+      <div class="form-group"><label>Image URL</label><input id="pImage" placeholder="https://..." /></div>
+      <div class="form-group"><label>Benefits (one per line)</label><textarea id="pBenefits" rows="4" placeholder="Boosts immune system&#10;Powerful antioxidant"></textarea></div>
+      <div class="form-group">
+        <label>In Stock</label>
+        <select id="pInStock"><option value="true">Yes</option><option value="false">No</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('productModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal" style="width:400px">
+    <div class="modal-header">
+      <h3 id="catModalTitle">Add Category</h3>
+      <button class="modal-close" onclick="closeModal('catModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editCatId" />
+      <div class="form-group"><label>Name *</label><input id="cName" placeholder="Vitamin Capsules" /></div>
+      <div class="form-group"><label>Slug *</label><input id="cSlug" placeholder="vitamins" /></div>
+      <div class="form-group"><label>Icon (Material Symbol)</label><input id="cIcon" placeholder="science" /></div>
+      <div class="form-group"><label>Description</label><textarea id="cDesc" rows="2"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('catModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCategory()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Inquiry Detail Modal -->
+<div class="modal-overlay" id="inqModal">
+  <div class="modal" style="width:480px">
+    <div class="modal-header">
+      <h3>Inquiry Detail</h3>
+      <button class="modal-close" onclick="closeModal('inqModal')">✕</button>
+    </div>
+    <div class="modal-body" id="inqDetail"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('inqModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '/api';
+let token = localStorage.getItem('lhc_token');
+let allProducts = [];
+
+// ── Auth ──────────────────────────────────────────────────────────────────
+async function login() {
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  err.style.display = 'none';
+  try {
+    const r = await fetch(`${API}/auth/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await r.json();
+    if (!r.ok) { err.style.display = 'block'; return; }
+    token = data.token;
+    localStorage.setItem('lhc_token', token);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminName').textContent = data.username;
+    init();
+  } catch { err.style.display = 'block'; }
+}
+
+function logout() {
+  localStorage.removeItem('lhc_token');
+  location.reload();
+}
+
+function authHeaders() {
+  return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+async function init() {
+  await Promise.all([loadDashboard(), loadProducts(), loadCategories(), loadInquiries()]);
+}
+
+if (token) {
+  fetch(`${API}/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminName').textContent = data.username;
+      init();
+    })
+    .catch(() => { localStorage.removeItem('lhc_token'); token = null; });
+}
+
+document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+// ── Sections ──────────────────────────────────────────────────────────────
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(`sec-${name}`).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const titles = { dashboard: 'Dashboard', products: 'Products', categories: 'Categories', inquiries: 'Inquiries' };
+  document.getElementById('pageTitle').textContent = titles[name];
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  const [products, categories, inquiries] = await Promise.all([
+    fetch(`${API}/products`).then(r => r.json()),
+    fetch(`${API}/categories`).then(r => r.json()),
+    fetch(`${API}/inquiries`, { headers: authHeaders() }).then(r => r.json()),
+  ]);
+  document.getElementById('statProducts').textContent = products.length;
+  document.getElementById('statCategories').textContent = categories.length;
+  document.getElementById('statInquiries').textContent = inquiries.length;
+  const newCount = inquiries.filter(i => i.status === 'new').length;
+  document.getElementById('statNew').textContent = newCount;
+  const badge = document.getElementById('inqBadge');
+  badge.textContent = newCount;
+  badge.style.display = newCount ? 'inline' : 'none';
+
+  const tbody = document.getElementById('dashInqTable');
+  const recent = inquiries.slice(0, 5);
+  tbody.innerHTML = recent.length ? recent.map(i => `
+    <tr>
+      <td>${esc(i.name)}</td>
+      <td>${esc(i.phone)}</td>
+      <td>${esc(i.productName) || '—'}</td>
+      <td><span class="badge badge-${i.status === 'new' ? 'new' : i.status === 'in-progress' ? 'inprogress' : 'resolved'}">${i.status}</span></td>
+      <td>${new Date(i.createdAt).toLocaleDateString('en-IN')}</td>
+    </tr>
+  `).join('') : '<tr><td colspan="5" style="color:var(--muted);text-align:center">No inquiries yet</td></tr>';
+}
+
+// ── Products ──────────────────────────────────────────────────────────────
+async function loadProducts() {
+  const data = await fetch(`${API}/products`).then(r => r.json());
+  allProducts = data;
+  renderProducts(data);
+}
+
+function filterProducts() {
+  const q = document.getElementById('productSearch').value.toLowerCase();
+  renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(q) || (p.category?.name || '').toLowerCase().includes(q)));
+}
+
+function renderProducts(products) {
+  const tbody = document.getElementById('productsTable');
+  tbody.innerHTML = products.length ? products.map(p => `
+    <tr>
+      <td><strong>${esc(p.name)}</strong><br><span style="color:var(--muted);font-size:12px">${esc(p.tagline)}</span></td>
+      <td>${esc(p.category?.name || '—')}</td>
+      <td>${p.capsuleCount}</td>
+      <td><span class="badge ${p.inStock ? 'badge-stock' : 'badge-nostock'}">${p.inStock ? 'In Stock' : 'Out of Stock'}</span></td>
+      <td>${p.badge ? `<span class="badge badge-new">${esc(p.badge)}</span>` : '—'}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Delete</button>
+      </td>
+    </tr>
+  `).join('') : '<tr><td colspan="6" style="color:var(--muted);text-align:center">No products found</td></tr>';
+}
+
+async function openProductModal(product = null) {
+  const cats = await fetch(`${API}/categories`).then(r => r.json());
+  const sel = document.getElementById('pCategory');
+  sel.innerHTML = '<option value="">Select category</option>' + cats.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+
+  document.getElementById('editProductId').value = '';
+  ['pName','pSlug','pTagline','pDescription','pBadge','pImage','pForm','pGrade','pOrigin','pShelfLife','pStorage','pBenefits'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pCapsules').value = 60;
+  document.getElementById('pInStock').value = 'true';
+
+  if (product) {
+    document.getElementById('productModalTitle').textContent = 'Edit Product';
+    document.getElementById('editProductId').value = product.id;
+    document.getElementById('pName').value = product.name || '';
+    document.getElementById('pSlug').value = product.slug || '';
+    document.getElementById('pTagline').value = product.tagline || '';
+    document.getElementById('pDescription').value = product.description || '';
+    document.getElementById('pBadge').value = product.badge || '';
+    document.getElementById('pImage').value = product.image || '';
+    document.getElementById('pCapsules').value = product.capsuleCount || 60;
+    document.getElementById('pForm').value = product.form || '';
+    document.getElementById('pGrade').value = product.grade || '';
+    document.getElementById('pOrigin').value = product.origin || '';
+    document.getElementById('pShelfLife').value = product.shelfLife || '';
+    document.getElementById('pStorage').value = product.storage || '';
+    document.getElementById('pBenefits').value = (product.benefits || []).join('\n');
+    document.getElementById('pInStock').value = product.inStock ? 'true' : 'false';
+    sel.value = product.categoryId || '';
+  } else {
+    document.getElementById('productModalTitle').textContent = 'Add Product';
+  }
+  document.getElementById('productModal').classList.add('open');
+}
+
+async function editProduct(id) {
+  const p = await fetch(`${API}/products/${id}`).then(r => r.json());
+  openProductModal(p);
+}
+
+async function saveProduct() {
+  const id = document.getElementById('editProductId').value;
+  const benefits = document.getElementById('pBenefits').value.split('\n').map(s => s.trim()).filter(Boolean);
+  const body = {
+    name: document.getElementById('pName').value,
+    slug: document.getElementById('pSlug').value,
+    categoryId: document.getElementById('pCategory').value,
+    tagline: document.getElementById('pTagline').value,
+    description: document.getElementById('pDescription').value,
+    badge: document.getElementById('pBadge').value || null,
+    image: document.getElementById('pImage').value,
+    capsuleCount: document.getElementById('pCapsules').value,
+    form: document.getElementById('pForm').value,
+    grade: document.getElementById('pGrade').value,
+    origin: document.getElementById('pOrigin').value,
+    shelfLife: document.getElementById('pShelfLife').value,
+    storage: document.getElementById('pStorage').value,
+    benefits: JSON.stringify(benefits),
+    inStock: document.getElementById('pInStock').value,
+  };
+  const url = id ? `${API}/products/${id}` : `${API}/products`;
+  const method = id ? 'PUT' : 'POST';
+  const r = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+  if (r.ok) { closeModal('productModal'); loadProducts(); loadDashboard(); showToast('Product saved!', 'success'); }
+  else { const d = await r.json(); showToast(d.error || 'Error', 'error'); }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  const r = await fetch(`${API}/products/${id}`, { method: 'DELETE', headers: authHeaders() });
+  if (r.ok) { loadProducts(); loadDashboard(); showToast('Product deleted', 'success'); }
+  else showToast('Error deleting product', 'error');
+}
+
+// ── Categories ────────────────────────────────────────────────────────────
+async function loadCategories() {
+  const data = await fetch(`${API}/categories`).then(r => r.json());
+  const tbody = document.getElementById('categoriesTable');
+  tbody.innerHTML = data.length ? data.map(c => `
+    <tr>
+      <td><strong>${esc(c.name)}</strong></td>
+      <td><code style="color:var(--accent);font-size:12px">${esc(c.slug)}</code></td>
+      <td>${c.productCount}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="editCategory(${c.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCategory(${c.id})">Delete</button>
+      </td>
+    </tr>
+  `).join('') : '<tr><td colspan="4" style="color:var(--muted);text-align:center">No categories</td></tr>';
+}
+
+function openCatModal(cat = null) {
+  document.getElementById('editCatId').value = '';
+  ['cName','cSlug','cIcon','cDesc'].forEach(id => document.getElementById(id).value = '');
+  if (cat) {
+    document.getElementById('catModalTitle').textContent = 'Edit Category';
+    document.getElementById('editCatId').value = cat.id;
+    document.getElementById('cName').value = cat.name || '';
+    document.getElementById('cSlug').value = cat.slug || '';
+    document.getElementById('cIcon').value = cat.icon || '';
+    document.getElementById('cDesc').value = cat.description || '';
+  } else {
+    document.getElementById('catModalTitle').textContent = 'Add Category';
+  }
+  document.getElementById('catModal').classList.add('open');
+}
+
+async function editCategory(id) {
+  const cats = await fetch(`${API}/categories`).then(r => r.json());
+  openCatModal(cats.find(c => c.id === id));
+}
+
+async function saveCategory() {
+  const id = document.getElementById('editCatId').value;
+  const body = { name: document.getElementById('cName').value, slug: document.getElementById('cSlug').value, icon: document.getElementById('cIcon').value, description: document.getElementById('cDesc').value };
+  const url = id ? `${API}/categories/${id}` : `${API}/categories`;
+  const method = id ? 'PUT' : 'POST';
+  const r = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+  if (r.ok) { closeModal('catModal'); loadCategories(); showToast('Category saved!', 'success'); }
+  else { const d = await r.json(); showToast(d.error || 'Error', 'error'); }
+}
+
+async function deleteCategory(id) {
+  if (!confirm('Delete this category?')) return;
+  const r = await fetch(`${API}/categories/${id}`, { method: 'DELETE', headers: authHeaders() });
+  if (r.ok) { loadCategories(); showToast('Category deleted', 'success'); }
+  else showToast('Error deleting category', 'error');
+}
+
+// ── Inquiries ─────────────────────────────────────────────────────────────
+async function loadInquiries() {
+  const status = document.getElementById('inqFilter')?.value || '';
+  const search = document.getElementById('inqSearch')?.value || '';
+  let url = `${API}/inquiries`;
+  const params = [];
+  if (status) params.push(`status=${status}`);
+  if (search) params.push(`search=${encodeURIComponent(search)}`);
+  if (params.length) url += '?' + params.join('&');
+
+  const data = await fetch(url, { headers: authHeaders() }).then(r => r.json());
+  const tbody = document.getElementById('inquiriesTable');
+  const srcBadge = s => s === 'gateway'
+    ? `<span class="badge badge-new">Lead</span>`
+    : `<span style="color:var(--muted);font-size:11px">Product</span>`;
+  tbody.innerHTML = data.length ? data.map(i => `
+    <tr>
+      <td><strong>${esc(i.name)}</strong></td>
+      <td>${esc(i.businessName) || '—'}</td>
+      <td><a href="tel:${esc(i.phone)}" style="color:var(--accent)">${esc(i.phone)}</a></td>
+      <td>${esc(i.city) || '—'}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(i.message)}">${esc(i.message) || '—'}</td>
+      <td>${srcBadge(i.source)}</td>
+      <td>
+        <select onchange="updateInqStatus(${i.id}, this.value)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text);font-size:12px">
+          <option ${i.status==='new'?'selected':''} value="new">New</option>
+          <option ${i.status==='in-progress'?'selected':''} value="in-progress">In Progress</option>
+          <option ${i.status==='resolved'?'selected':''} value="resolved">Resolved</option>
+        </select>
+      </td>
+      <td style="white-space:nowrap">${new Date(i.createdAt).toLocaleDateString('en-IN')}<br><span style="color:var(--muted);font-size:11px">${new Date(i.createdAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span></td>
+      <td style="display:flex;gap:4px">
+        <button class="btn btn-ghost btn-sm" onclick="viewInquiry(${JSON.stringify(i).replace(/"/g,'&quot;')})">View</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteInquiry(${i.id})">Del</button>
+      </td>
+    </tr>
+  `).join('') : '<tr><td colspan="9" style="color:var(--muted);text-align:center">No inquiries found</td></tr>';
+}
+
+async function updateInqStatus(id, status) {
+  await fetch(`${API}/inquiries/${id}/status`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ status }) });
+  loadDashboard();
+  showToast('Status updated', 'success');
+}
+
+function viewInquiry(i) {
+  document.getElementById('inqDetail').innerHTML = `
+    <div style="display:grid;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div><div style="color:var(--muted);font-size:12px">Full Name</div><div>${esc(i.name)}</div></div>
+        <div><div style="color:var(--muted);font-size:12px">Business</div><div>${esc(i.businessName) || '—'}</div></div>
+        <div><div style="color:var(--muted);font-size:12px">Phone</div><div><a href="tel:${esc(i.phone)}" style="color:#00B4D8">${esc(i.phone)}</a></div></div>
+        <div><div style="color:var(--muted);font-size:12px">City</div><div>${esc(i.city) || '—'}</div></div>
+        <div><div style="color:var(--muted);font-size:12px">Email</div><div>${esc(i.email) || '—'}</div></div>
+        <div><div style="color:var(--muted);font-size:12px">Source</div><div>${esc(i.source) || '—'}</div></div>
+        <div><div style="color:var(--muted);font-size:12px">Status</div><div>${i.status}</div></div>
+        <div><div style="color:var(--muted);font-size:12px">Date & Time</div><div>${new Date(i.createdAt).toLocaleString('en-IN')}</div></div>
+      </div>
+      <div><div style="color:var(--muted);font-size:12px;margin-bottom:6px">Message</div><div style="background:var(--surface2);padding:12px;border-radius:8px;line-height:1.6">${esc(i.message) || '—'}</div></div>
+      <a href="https://wa.me/917022118290?text=${encodeURIComponent('Hello '+i.name+', we received your enquiry from Lavesh Health Care. How can we help you?')}" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;text-decoration:none;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Reply on WhatsApp
+      </a>
+    </div>
+  `;
+  document.getElementById('inqModal').classList.add('open');
+}
+
+async function deleteInquiry(id) {
+  if (!confirm('Delete this inquiry?')) return;
+  const r = await fetch(`${API}/inquiries/${id}`, { method: 'DELETE', headers: authHeaders() });
+  if (r.ok) { loadInquiries(); loadDashboard(); showToast('Deleted', 'success'); }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+</script>
+</body>
+</html>

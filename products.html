@@ -4,6 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Full Catalog — Lavesh Health Care</title>
+  <link rel="stylesheet" href="animations.css"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
   <style>
@@ -34,17 +35,40 @@
     .pill.active { background: #00B4D8; border-color: #00B4D8; color: #020617; font-weight: 700; }
     .pill-count { opacity: 0.8; font-size: 12px; }
 
+    @keyframes lg-shimmer {
+      0%   { transform: translateX(-100%) skewX(-15deg); }
+      100% { transform: translateX(250%)  skewX(-15deg); }
+    }
+
     /* ── Product card ── */
     .product-card {
-      background: #0d1829;
-      border: 1px solid #1a2d4a;
+      background: rgba(8, 20, 42, 0.5);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
     }
-    .product-card:hover { border-color: #00B4D8; transform: translateY(-3px); }
+    .product-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -60%;
+      width: 40%; height: 100%;
+      background: linear-gradient(105deg, transparent, rgba(255,255,255,0.05), transparent);
+      transform: skewX(-15deg);
+      animation: lg-shimmer 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .product-card:hover {
+      border-color: rgba(0,180,216,0.45);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,180,216,0.15), inset 0 1px 0 rgba(255,255,255,0.15);
+    }
     .card-img {
       background: #fff;
       aspect-ratio: 1;
@@ -122,9 +146,9 @@
       <a href="/" style="color:#94a3b8;text-decoration:none;font-size:13px;font-weight:500" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">Home</a>
       <a href="products.html" style="color:#00B4D8;text-decoration:none;font-size:13px;font-weight:600">Catalog</a>
       <a href="about.html" style="color:#94a3b8;text-decoration:none;font-size:13px;font-weight:500" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">About Us</a>
-      <a href="https://wa.me/917022118290" target="_blank"
+      <a href="enquiry.html"
          style="background:#00B4D8;color:#020617;text-decoration:none;padding:8px 18px;border-radius:999px;font-size:13px;font-weight:700">
-        WhatsApp Us
+        Enquire Now
       </a>
     </nav>
   </div>
@@ -149,12 +173,16 @@
 </div>
 
 <!-- ══ HERO ══════════════════════════════════════════════════════════ -->
-<section style="padding:64px 24px 48px;text-align:center;background:radial-gradient(ellipse at center top,rgba(0,100,120,0.1) 0%,transparent 60%)">
-  <p style="font-size:11px;letter-spacing:0.3em;color:#00B4D8;text-transform:uppercase;margin-bottom:16px">Full Catalog</p>
-  <h1 style="font-family:'Playfair Display',serif;font-size:clamp(40px,6vw,72px);color:#fff;margin-bottom:14px;line-height:1.1">
-    Our <em style="color:#00B4D8">Products</em>
-  </h1>
-  <p id="heroSubtitle" style="color:#64748b;font-size:15px">Loading products…</p>
+<section style="padding:64px 24px 48px;text-align:center;background:radial-gradient(ellipse at center top,rgba(0,100,120,0.1) 0%,transparent 60%);position:relative;overflow:hidden">
+  <div class="aurora-blob-1"></div>
+  <div class="aurora-blob-3"></div>
+  <div style="position:relative">
+    <p class="anim-shimmer-text" style="font-size:11px;letter-spacing:0.3em;color:#00B4D8;text-transform:uppercase;margin-bottom:16px" data-anim="fade-down">Full Catalog</p>
+    <h1 style="font-family:'Playfair Display',serif;font-size:clamp(40px,6vw,72px);color:#fff;margin-bottom:14px;line-height:1.1" data-anim="fade-up">
+      Our <em style="color:#00B4D8">Products</em>
+    </h1>
+    <p id="heroSubtitle" style="color:#64748b;font-size:15px" data-anim="fade-up" data-delay="2">Loading products…</p>
+  </div>
 </section>
 
 <!-- ══ FILTERS ════════════════════════════════════════════════════════ -->
@@ -317,10 +345,11 @@ function buildPills() {
     const em = CAT_EMOJI[cat.slug] || '💊';
     const shortName = cat.name.replace(' Capsules','').replace(' Extract','');
     const pill = document.createElement('div');
-    pill.className = 'pill';
+    pill.className = 'pill anim-bounce-in';
     pill.dataset.cat = cat.id;
     pill.onclick = () => selectCat(pill);
     pill.innerHTML = `${em} ${shortName} <span class="pill-count">(${count})</span>`;
+    pill.style.animationDelay = (allCategories.indexOf(cat) * 0.06 + 0.1) + 's';
     wrap.appendChild(pill);
   });
 }
@@ -355,13 +384,14 @@ function renderGrid(products) {
     return;
   }
   empty.style.display = 'none';
-  grid.innerHTML = products.map(p => {
+  grid.innerHTML = products.map((p, i) => {
     const badge = p.badge ? `<div class="card-badge">${p.badge}</div>` : '';
     const img   = p.image || `https://placehold.co/200x200/f0f4f8/64748b?text=${encodeURIComponent(p.name)}`;
     const name  = p.name.replace(/&/g,'&amp;').replace(/</g,'&lt;');
     const tag   = (p.tagline||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    const delay = Math.min((i % 8) + 1, 9);
     return `
-      <div class="product-card">
+      <div class="product-card tilt-card" data-anim="fade-up" data-delay="${delay}">
         <div class="card-img">
           ${badge}
           <img src="${img}" alt="${name}" loading="lazy"
@@ -371,10 +401,13 @@ function renderGrid(products) {
           <div class="card-name">${name}</div>
           <div class="card-tag">${tag}</div>
           <div class="card-pill">${p.capsuleCount || 60} Vegan Capsules</div>
-          <button class="card-btn" onclick="openModal(${p.id},'${name.replace(/'/g,"\\'")}')">Enquire Now</button>
+          <button class="card-btn btn-ripple btn-press" onclick="openModal(${p.id},'${name.replace(/'/g,"\\'")}')">Enquire Now</button>
         </div>
       </div>`;
   }).join('');
+  if (window._revealObs) {
+    grid.querySelectorAll('[data-anim]').forEach(el => window._revealObs.observe(el));
+  }
 }
 
 // ── Modal ──────────────────────────────────────────────────────────
@@ -424,5 +457,6 @@ async function submitEnquiry() {
 
 boot();
 </script>
+<script src="animations.js"></script>
 </body>
 </html>

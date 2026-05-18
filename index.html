@@ -508,12 +508,10 @@ const WA_NUMBER = '917022118290';
 
 // ── Category icons — nav icon matches section icon ──────────────────────
 const CAT_ICONS = {
-  vitamins: `<span class="material-symbols-outlined text-orange-400" style="font-size:32px">pill</span>`,
-  minerals: `<span class="material-symbols-outlined text-blue-400" style="font-size:32px">science</span>`,
-  herbal:   `<span class="material-symbols-outlined text-green-400" style="font-size:32px">eco</span>`,
-  'amino-acids': `<span class="material-symbols-outlined text-purple-400" style="font-size:32px">exercise</span>`,
-  'weight-management': `<span class="material-symbols-outlined text-yellow-400" style="font-size:32px">fitness_center</span>`,
-  'gut-health': `<span class="material-symbols-outlined text-emerald-400" style="font-size:32px">microbiology</span>`,
+  'vitamins':              `<span class="material-symbols-outlined text-orange-400" style="font-size:32px">pill</span>`,
+  'minerals':              `<span class="material-symbols-outlined text-blue-400" style="font-size:32px">science</span>`,
+  'effervescent-tablets':  `<span class="material-symbols-outlined text-teal-400" style="font-size:32px">bubble_chart</span>`,
+  'paralysis-cancer-care': `<span class="material-symbols-outlined text-purple-400" style="font-size:32px">favorite</span>`,
 };
 
 function productCard(p) {
@@ -534,19 +532,27 @@ function productCard(p) {
   `;
 }
 
-function categorySection(cat, products) {
+function categorySection(cat, preview, total) {
   const icon = CAT_ICONS[cat.slug] || `<span class="material-symbols-outlined text-cyan-400 text-3xl">science</span>`;
+  const hasMore = total > preview.length;
+  const viewAll = hasMore
+    ? `<a href="products.html#${cat.slug}" class="text-sm text-cyan-400 hover:text-cyan-300 font-medium ml-auto">View All (${total}) →</a>`
+    : '';
+  const grid = preview.length
+    ? preview.map(productCard).join('')
+    : `<p class="col-span-full text-center text-gray-500 py-8">Products coming soon.</p>`;
   return `
     <section data-purpose="product-category" id="${cat.slug}">
       <div class="category-header pb-4 mb-10" data-anim="fade-up">
         <div class="flex items-center gap-3 mb-2">
           ${icon}
           <h2 class="text-3xl font-semibold">${cat.name}</h2>
+          ${viewAll}
         </div>
         <p class="text-gray-500">${cat.description}</p>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" data-stagger>
-        ${products.map(productCard).join('')}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" data-stagger>
+        ${grid}
       </div>
     </section>
   `;
@@ -577,10 +583,10 @@ async function loadProducts(search = '') {
 
     categories.forEach(cat => {
       const catProducts = products.filter(p => p.categoryId === cat.id);
-      if (!catProducts.length) return;
+      const preview = catProducts.slice(0, 4);
       const sec = document.createElement('div');
       sec.setAttribute('data-dynamic', '');
-      sec.innerHTML = categorySection(cat, catProducts);
+      sec.innerHTML = categorySection(cat, preview, catProducts.length);
       root.appendChild(sec);
       // wire animations for dynamically added elements
       sec.querySelectorAll('[data-anim]').forEach(el => window._revealObs && window._revealObs.observe(el));
@@ -593,7 +599,7 @@ async function loadProducts(search = '') {
       });
     });
   } catch (e) {
-    document.getElementById('productsLoading').innerHTML = '<p style="color:#ef4444">Failed to load products. Make sure the server is running on port 3001.</p>';
+    document.getElementById('productsLoading').innerHTML = '<p style="color:#ef4444">Failed to load products. Please refresh the page.</p>';
   }
 }
 

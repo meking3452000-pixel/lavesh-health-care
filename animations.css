@@ -46,12 +46,13 @@ body { animation: page-enter 0.6s ease both; }
   100% { background-position: 0% 50%; }
 }
 .text-anim-gradient {
-  background: linear-gradient(135deg, #00B4D8 0%, #a78bfa 35%, #00dcb4 65%, #00B4D8 100%);
+  background: linear-gradient(135deg, #00e5ff 0%, #c084fc 35%, #00ffcc 65%, #00e5ff 100%);
   background-size: 300% 300%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: gradient-flow 5s ease infinite;
+  filter: drop-shadow(0 0 12px rgba(0,220,180,0.6));
 }
 
 /* ── Typewriter cursor ── */

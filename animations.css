@@ -46,13 +46,8 @@ body { animation: page-enter 0.6s ease both; }
   100% { background-position: 0% 50%; }
 }
 .text-anim-gradient {
-  background: linear-gradient(135deg, #00e5ff 0%, #c084fc 35%, #00ffcc 65%, #00e5ff 100%);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradient-flow 5s ease infinite;
-  filter: drop-shadow(0 0 12px rgba(0,220,180,0.6));
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
 
 /* ── Typewriter cursor ── */
@@ -84,14 +79,8 @@ body { animation: page-enter 0.6s ease both; }
   100% { background-position:  200% center; }
 }
 .anim-shimmer-text {
-  background: linear-gradient(90deg, #00B4D8 40%, #ffffff 50%, #00B4D8 60%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer-sweep 3s linear infinite;
-  text-shadow: none;
-  filter: drop-shadow(0 0 8px rgba(0,180,216,0.5));
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
 
 /* ── Bounce-in (pills, badges) ── */

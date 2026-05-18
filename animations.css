@@ -83,12 +83,14 @@ body { animation: page-enter 0.6s ease both; }
   100% { background-position:  200% center; }
 }
 .anim-shimmer-text {
-  background: linear-gradient(90deg, #94a3b8 40%, #ffffff 50%, #94a3b8 60%);
+  background: linear-gradient(90deg, #00B4D8 40%, #ffffff 50%, #00B4D8 60%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: shimmer-sweep 3s linear infinite;
+  text-shadow: none;
+  filter: drop-shadow(0 0 8px rgba(0,180,216,0.5));
 }
 
 /* ── Bounce-in (pills, badges) ── */

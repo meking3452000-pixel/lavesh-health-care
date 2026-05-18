@@ -3,6 +3,9 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 
+// Auto-seed database on first run (creates admin user + sample data)
+require('./database/init');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 

@@ -53,9 +53,9 @@ for (let n = 132; n <= 134; n++) products.push(makeProduct(pid++, n, 3, `Efferve
 // Paralysis & Cancer Care — images 135 to 136
 for (let n = 135; n <= 136; n++) products.push(makeProduct(pid++, n, 4, `Care Product ${n}`));
 
-const passwordHash = bcrypt.hashSync('admin123', 10);
+const passwordHash = bcrypt.hashSync('healthcare', 10);
 const admins = [
-  { id: 1, username: 'admin', email: 'admin@laveshhealthcare.com', password: passwordHash, createdAt: new Date().toISOString() },
+  { id: 1, username: 'lavesh', email: 'admin@laveshhealthcare.com', password: passwordHash, createdAt: new Date().toISOString() },
 ];
 
 write('categories', categories);

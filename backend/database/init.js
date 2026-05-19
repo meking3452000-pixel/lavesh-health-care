@@ -3,7 +3,7 @@ const path = require('path');
 
 const DATA_DIR   = path.join(__dirname, 'data');
 const metaFile   = path.join(DATA_DIR, '_meta.json');
-const SEED_VERSION = 2;
+const SEED_VERSION = 3;
 
 function needsReseed() {
   if (!fs.existsSync(path.join(DATA_DIR, 'products.json'))) return true;

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'lavesh_healthcare_secret_2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'lavesh_hc_secret_v2_2026';
 
 function requireAdmin(req, res, next) {
   const header = req.headers['authorization'];

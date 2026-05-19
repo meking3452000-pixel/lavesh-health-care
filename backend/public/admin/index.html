@@ -293,7 +293,18 @@
         <div class="form-group"><label>Shelf Life</label><input id="pShelfLife" placeholder="24 months" /></div>
         <div class="form-group"><label>Storage</label><input id="pStorage" placeholder="Cool & dry place" /></div>
       </div>
-      <div class="form-group"><label>Image URL</label><input id="pImage" placeholder="https://..." /></div>
+      <div class="form-group">
+        <label>Product Image</label>
+        <div id="pImagePreview" style="display:none;margin-bottom:10px;text-align:center;">
+          <img id="pImagePreviewImg" style="max-height:130px;max-width:100%;border-radius:8px;object-fit:contain;background:#fff;padding:8px;" />
+        </div>
+        <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:var(--surface2);border:1px dashed var(--accent);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--accent);margin-bottom:8px;">
+          <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;">upload</span>
+          Upload Image
+          <input type="file" id="pImageFile" accept="image/*" style="display:none" onchange="previewProductImage(this)" />
+        </label>
+        <input id="pImage" placeholder="or current path, e.g. /products/3.png" style="font-size:13px;" />
+      </div>
       <div class="form-group"><label>Benefits (one per line)</label><textarea id="pBenefits" rows="4" placeholder="Boosts immune system&#10;Powerful antioxidant"></textarea></div>
       <div class="form-group">
         <label>In Stock</label>
@@ -475,6 +486,8 @@ async function openProductModal(product = null) {
   ['pName','pSlug','pTagline','pDescription','pBadge','pImage','pForm','pGrade','pOrigin','pShelfLife','pStorage','pBenefits'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('pCapsules').value = 60;
   document.getElementById('pInStock').value = 'true';
+  document.getElementById('pImageFile').value = '';
+  document.getElementById('pImagePreview').style.display = 'none';
 
   if (product) {
     document.getElementById('productModalTitle').textContent = 'Edit Product';
@@ -485,6 +498,10 @@ async function openProductModal(product = null) {
     document.getElementById('pDescription').value = product.description || '';
     document.getElementById('pBadge').value = product.badge || '';
     document.getElementById('pImage').value = product.image || '';
+    if (product.image) {
+      document.getElementById('pImagePreviewImg').src = product.image;
+      document.getElementById('pImagePreview').style.display = 'block';
+    }
     document.getElementById('pCapsules').value = product.capsuleCount || 60;
     document.getElementById('pForm').value = product.form || '';
     document.getElementById('pGrade').value = product.grade || '';
@@ -505,29 +522,57 @@ async function editProduct(id) {
   openProductModal(p);
 }
 
+function previewProductImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('pImagePreviewImg').src = e.target.result;
+    document.getElementById('pImagePreview').style.display = 'block';
+    document.getElementById('pImage').value = '';
+    document.getElementById('pImage').placeholder = file.name + ' (will be uploaded)';
+  };
+  reader.readAsDataURL(file);
+}
+
 async function saveProduct() {
   const id = document.getElementById('editProductId').value;
   const benefits = document.getElementById('pBenefits').value.split('\n').map(s => s.trim()).filter(Boolean);
-  const body = {
-    name: document.getElementById('pName').value,
-    slug: document.getElementById('pSlug').value,
-    categoryId: document.getElementById('pCategory').value,
-    tagline: document.getElementById('pTagline').value,
+  const fileInput = document.getElementById('pImageFile');
+  const hasFile = fileInput.files.length > 0;
+
+  const fields = {
+    name:        document.getElementById('pName').value,
+    slug:        document.getElementById('pSlug').value,
+    categoryId:  document.getElementById('pCategory').value,
+    tagline:     document.getElementById('pTagline').value,
     description: document.getElementById('pDescription').value,
-    badge: document.getElementById('pBadge').value || null,
-    image: document.getElementById('pImage').value,
-    capsuleCount: document.getElementById('pCapsules').value,
-    form: document.getElementById('pForm').value,
-    grade: document.getElementById('pGrade').value,
-    origin: document.getElementById('pOrigin').value,
-    shelfLife: document.getElementById('pShelfLife').value,
-    storage: document.getElementById('pStorage').value,
-    benefits: JSON.stringify(benefits),
-    inStock: document.getElementById('pInStock').value,
+    badge:       document.getElementById('pBadge').value || '',
+    image:       document.getElementById('pImage').value,
+    capsuleCount:document.getElementById('pCapsules').value,
+    form:        document.getElementById('pForm').value,
+    grade:       document.getElementById('pGrade').value,
+    origin:      document.getElementById('pOrigin').value,
+    shelfLife:   document.getElementById('pShelfLife').value,
+    storage:     document.getElementById('pStorage').value,
+    benefits:    JSON.stringify(benefits),
+    inStock:     document.getElementById('pInStock').value,
   };
+
   const url = id ? `${API}/products/${id}` : `${API}/products`;
   const method = id ? 'PUT' : 'POST';
-  const r = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+  let fetchOpts;
+
+  if (hasFile) {
+    const fd = new FormData();
+    Object.entries(fields).forEach(([k, v]) => fd.append(k, v ?? ''));
+    fd.append('image', fileInput.files[0]);
+    fetchOpts = { method, headers: { 'Authorization': `Bearer ${token}` }, body: fd };
+  } else {
+    fetchOpts = { method, headers: authHeaders(), body: JSON.stringify(fields) };
+  }
+
+  const r = await fetch(url, fetchOpts);
   if (r.ok) { closeModal('productModal'); loadProducts(); loadDashboard(); showToast('Product saved!', 'success'); }
   else { const d = await r.json(); showToast(d.error || 'Error', 'error'); }
 }

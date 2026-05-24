@@ -187,36 +187,8 @@
 </div>
 </header><div class="bg-[#020617] border-b border-slate-800/50 py-6 overflow-hidden">
 <div class="max-w-7xl mx-auto px-4">
-<div class="flex items-center gap-8 overflow-x-auto no-scrollbar whitespace-nowrap justify-between">
-<div class="flex items-center gap-3 group cursor-pointer">
-<span class="material-symbols-outlined text-orange-400 text-xl">pill</span>
-<span class="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">Vitamin Capsules</span>
-</div>
-<div class="w-px h-4 bg-slate-800 hidden md:block"></div>
-<div class="flex items-center gap-3 group cursor-pointer">
-<span class="material-symbols-outlined text-blue-400 text-xl">science</span>
-<span class="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">Minerals Capsules</span>
-</div>
-<div class="w-px h-4 bg-slate-800 hidden md:block"></div>
-<div class="flex items-center gap-3 group cursor-pointer">
-<span class="material-symbols-outlined text-green-400 text-xl">eco</span>
-<span class="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">Herbal Extract Capsules</span>
-</div>
-<div class="w-px h-4 bg-slate-800 hidden md:block"></div>
-<div class="flex items-center gap-3 group cursor-pointer">
-<span class="material-symbols-outlined text-purple-400 text-xl">exercise</span>
-<span class="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">Amino-Acids Capsules</span>
-</div>
-<div class="w-px h-4 bg-slate-800 hidden md:block"></div>
-<div class="flex items-center gap-3 group cursor-pointer">
-<span class="material-symbols-outlined text-yellow-400 text-xl">fitness_center</span>
-<span class="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">Weight Management Capsules</span>
-</div>
-<div class="w-px h-4 bg-slate-800 hidden md:block"></div>
-<div class="flex items-center gap-3 group cursor-pointer">
-<span class="material-symbols-outlined text-emerald-400 text-xl">microbiology</span>
-<span class="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">Gut Health Capsules</span>
-</div>
+<div id="categoryNav" class="flex items-center gap-8 overflow-x-auto no-scrollbar whitespace-nowrap justify-center">
+<!-- Dynamically rendered categories -->
 </div>
 </div>
 </div>
@@ -243,149 +215,7 @@
   Loading products...
 </div>
 <!-- Old static sections removed — content is now dynamically rendered from the API -->
-<section data-purpose="product-category" id="vitamins" style="display:none">
-<div class="category-header pb-4 mb-10" data-anim="fade-up">
-<div class="flex items-center gap-3 mb-2">
-<svg class="w-8 h-8 text-orange-400" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path></svg>
-<h2 class="text-3xl font-semibold">Vitamin Capsules</h2>
-</div>
-<p class="text-gray-500">Essential micronutrients for body functions</p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8" data-stagger>
-<!-- Vitamin C -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="Vitamin C" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">Vitamin C</h3>
-<p class="text-sm text-slate-400 mb-4">Ascorbic Acid (USP)</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(1,'Vitamin C')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-<!-- Vitamin D3 -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="Vitamin D3" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">Vitamin D3</h3>
-<p class="text-sm text-slate-400 mb-4">Cholecalciferol</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(2,'Vitamin D3')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-<!-- B-Complex -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="B-Complex" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">B-Complex</h3>
-<p class="text-sm text-slate-400 mb-4">Vitamin B Mix</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(3,'Vitamin B-Complex')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-</div>
-</section>
-<!-- Section: Minerals Capsules -->
-<section data-purpose="product-category" id="minerals">
-<div class="category-header pb-4 mb-10" data-anim="fade-up">
-<div class="flex items-center gap-3 mb-2">
-<svg class="w-8 h-8 text-blue-400" fill="currentColor" viewbox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path></svg>
-<h2 class="text-3xl font-semibold">Minerals Capsules</h2>
-</div>
-<p class="text-gray-500">Inorganic elements required for physiological functions</p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" data-stagger>
-<!-- Calcium -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="Calcium" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">Calcium</h3>
-<p class="text-sm text-slate-400 mb-4">Calcium Carbonate</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(4,'Calcium 500mg')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-<!-- Zinc -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="Zinc" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">Zinc</h3>
-<p class="text-sm text-slate-400 mb-4">Zinc Gluconate</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(5,'Zinc 25mg')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-<!-- Magnesium -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="Magnesium" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">Magnesium</h3>
-<p class="text-sm text-slate-400 mb-4">Magnesium Citrate</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(6,'Magnesium 300mg')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-</div>
-</section>
-<!-- Section: Herbal Extract Capsules -->
-<section data-purpose="product-category" id="herbal">
-<div class="category-header pb-4 mb-10" data-anim="fade-up">
-<div class="flex items-center gap-3 mb-2">
-<svg class="w-8 h-8 text-green-400" fill="currentColor" viewbox="0 0 24 24"><path d="M17,8C15.3,8 13.73,8.44 12.35,9.22L10.5,2.12L8.6,9.22C7.27,8.44 5.7,8 4,8C2.3,8 0.73,8.44 -0.65,9.22L1.2,16.32L3.1,9.22C4.43,10 6,10.44 7.7,10.44C9.4,10.44 11,10 12.35,9.22L14.2,16.32L16.05,9.22C17.38,10 18.95,10.44 20.65,10.44C22.35,10.44 23.92,10 25.27,9.22L23.4,2.12L21.55,9.22C20.27,8.44 18.7,8 17,8Z"></path></svg>
-<h2 class="text-3xl font-semibold">Herbal Extract Capsules</h2>
-</div>
-<p class="text-gray-500">Natural extracts for holistic wellness</p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" data-stagger>
-<!-- Ashwagandha -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="Ashwagandha" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">Ashwagandha</h3>
-<p class="text-sm text-slate-400 mb-4">Withania Somnifera</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(7,'Ashwagandha Extract')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-<!-- Turmeric -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="Turmeric" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">Turmeric</h3>
-<p class="text-sm text-slate-400 mb-4">Curcumin Extract</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(8,'Turmeric Curcumin')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-<!-- Ginseng -->
-<div class="bg-slate-900/50 rounded-lg p-4 flex flex-col border border-slate-800">
-<div class="bg-white rounded-lg aspect-square flex items-center justify-center p-6 mb-6">
-<img alt="Ginseng" class="h-40 w-auto object-contain" src="https://placehold.co/200x200/0f172a/00B4D8?text=Product"/>
-</div>
-<div class="flex flex-col items-center text-center">
-<h3 class="font-serif italic text-2xl text-white mb-1">Ginseng</h3>
-<p class="text-sm text-slate-400 mb-4">Panax Ginseng</p>
-<div class="bg-[#002201] text-[#90fb81] px-4 py-1.5 rounded-full text-[10px] font-mono mb-6 uppercase tracking-wider">60 Vegan Capsules</div>
-<button onclick="openInquiry(9,'Ginseng Extract')" class="w-full py-3 rounded-full border border-[#004b63] text-cyan-400 font-medium text-sm hover:bg-[#004b63]/10 transition-colors uppercase tracking-widest">Enquire Now</button>
-</div>
-</div>
-</div>
-</section>
+<!-- Dynamic categories and products rendered here from the database API -->
 </main>
 <!-- END: MainContent -->
 <!-- BEGIN: Footer -->
@@ -558,6 +388,55 @@ function categorySection(cat, preview, total) {
   `;
 }
 
+function buildCategoryNav(categories, products) {
+  const nav = document.getElementById('categoryNav');
+  if (!nav) return;
+  nav.innerHTML = '';
+  
+  // Filter categories to only those that have products in database
+  const activeCategories = categories.filter(cat => 
+    products.some(p => p.categoryId === cat.id)
+  );
+
+  activeCategories.forEach((cat, index) => {
+    let iconName = 'science';
+    let colorClass = 'text-cyan-400';
+    if (cat.slug === 'vitamins') {
+      iconName = 'pill';
+      colorClass = 'text-orange-400';
+    } else if (cat.slug === 'minerals') {
+      iconName = 'science';
+      colorClass = 'text-blue-400';
+    } else if (cat.slug === 'effervescent-tablets') {
+      iconName = 'bubble_chart';
+      colorClass = 'text-teal-400';
+    } else if (cat.slug === 'paralysis-cancer-care') {
+      iconName = 'favorite';
+      colorClass = 'text-purple-400';
+    }
+
+    const item = document.createElement('div');
+    item.className = 'flex items-center gap-3 group cursor-pointer';
+    item.onclick = () => {
+      const target = document.getElementById(cat.slug);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+    item.innerHTML = `
+      <span class="material-symbols-outlined ${colorClass} text-xl">${iconName}</span>
+      <span class="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">${cat.name}</span>
+    `;
+    nav.appendChild(item);
+
+    if (index < activeCategories.length - 1) {
+      const divider = document.createElement('div');
+      divider.className = 'w-px h-4 bg-slate-800 hidden md:block';
+      nav.appendChild(divider);
+    }
+  });
+}
+
 async function loadProducts(search = '') {
   try {
     const url = search ? `${API_BASE}/products?search=${encodeURIComponent(search)}` : `${API_BASE}/products`;
@@ -580,6 +459,9 @@ async function loadProducts(search = '') {
       root.appendChild(msg);
       return;
     }
+
+    // Render category navigation dynamically
+    buildCategoryNav(categories, products);
 
     categories.forEach(cat => {
       const catProducts = products.filter(p => p.categoryId === cat.id);
